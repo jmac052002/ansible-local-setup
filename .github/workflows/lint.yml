@@ -10,17 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
       - name: Install linters
         run: |
           python -m pip install --upgrade pip
-          pip install ansible ansible-lint yamllint
+          pip install "ansible>=9" ansible-lint yamllint
+
+      # NEW: install Ansible Galaxy collections used by the repo
+      - name: Install Ansible collections
+        run: |
+          if [ -f requirements.yml ]; then
+            ansible-galaxy collection install -r requirements.yml
+          else
+            ansible-galaxy collection install community.general
+          fi
+
       - name: Ansible syntax check
         run: ansible-playbook -i inventory.ini playbooks/setup.yml --syntax-check
+
       - name: Run ansible-lint
         run: ansible-lint
+
       - name: Run yamllint
         run: yamllint .
