@@ -1,16 +1,14 @@
+# Keep meaningful checks strict
 enable_list:
   - fqcn
   - fqcn-builtins
   - name[play]
   - name[task]
 
+# Downgrade style-only items to warnings
 warn_list:
   - yaml[line-length]
 
+# Do not fail CI on extra blank lines
 skip_list:
   - yaml[empty-lines]
-
-kinds:
-  - playbook
-  - tasks
-  - role
