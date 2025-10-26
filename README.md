@@ -1,91 +1,59 @@
+# 🧱 Ansible Local Server Setup (Flask → Gunicorn → Nginx)
 
-# Ansible: Local Server Setup Automation (Starter Pack)
+[![Ansible Lint](https://github.com/jmac052002/ansible-local-setup/actions/workflows/lint.yml/badge.svg)](https://github.com/jmac052002/ansible-local-setup/actions)
+[![Made with Ansible](https://img.shields.io/badge/Made%20with-Ansible-1A73E8?logo=ansible&logoColor=white)](https://www.ansible.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-This project automates the initial setup of a Linux machine (tested on Ubuntu/Debian) and can run **locally** (localhost) or against remote hosts over SSH. It installs common packages, sets the timezone, installs Docker, and configures Nginx with a simple web page.
+This project automates provisioning of a complete **local web stack** using **Ansible**:
+- Installs system essentials
+- Sets timezone and optional UFW
+- Installs and configures **Docker**
+- Deploys a **Flask app** behind **Gunicorn** and **Nginx**
+- Can run on **localhost**, **WSL**, or a **remote EC2**
 
-## What it does
-- Updates package cache and upgrades packages (safe mode)
-- Installs essentials: `git`, `curl`, `htop`, `unzip`
-- Sets the timezone (default: `America/Chicago`)
-- Installs and enables **Docker**
-- Installs and configures **Nginx** with a basic landing page
-- (Optional) Enables UFW and allows HTTP/SSH (disabled by default, see vars)
+---
 
-## Quick start (localhost)
+## 🧩 Project Overview
 
-> **Prereqs** (on your local machine):  
-> - Python 3.8+  
-> - Ansible 2.15+ (`pipx install ansible` or `pip install ansible`)  
-> - Ubuntu/Debian recommended for this starter
+| Layer | Tool | Purpose |
+|-------|------|----------|
+| OS | Ubuntu / Debian | Tested environment |
+| Config Mgmt | Ansible | Idempotent provisioning |
+| App | Flask | Simple Python web API |
+| WSGI | Gunicorn | Serves Flask over localhost:8000 |
+| Reverse Proxy | Nginx | Proxies traffic to Flask |
+| Optional | Docker, UFW | Demonstration of modular roles |
 
-```bash
-# 1) cd into the project
-cd ansible-local-setup
+---
 
-# 2) Check Ansible can reach localhost
-ansible -i inventory.ini all -m ping
+## 📁 Project Tree
 
-# 3) Dry-run (diff/verbose optional)
-ansible-playbook -i inventory.ini playbooks/setup.yml --check -v
-
-# 4) Apply
-ansible-playbook -i inventory.ini playbooks/setup.yml -v
-```
-
-Open the test site:
-```bash
-# Nginx default page served locally
-xdg-open http://localhost || true
-```
-
-## Adapting to remote hosts
-Edit `inventory.ini` and replace the `local` group with your hosts:
-```ini
-[web]
-1.2.3.4 ansible_user=ubuntu
-5.6.7.8 ansible_user=ec2-user
-
-# Optionally, set a key file:
-# ansible_ssh_private_key_file=~/.ssh/id_rsa
-```
-Then run the same `ansible-playbook` command with `-i inventory.ini`.
-
-## Variables
-Global variables live in `group_vars/all.yml`:
-- `timezone`: e.g. `America/Chicago`
-- `enable_ufw`: `false` by default (set to `true` to enable firewall)
-- `ufw_allowed_ports`: ports to allow when UFW enabled
-- `docker_user`: user to add to the `docker` group (defaults to the Ansible **effective** user if left empty)
-
-## Repo layout
-```
-ansible.cfg
-inventory.ini
-group_vars/
-  └── all.yml
-playbooks/
-  └── setup.yml
-roles/
-  ├── common/
-  │   ├── tasks/main.yml
-  │   ├── handlers/main.yml
-  │   └── templates/motd.j2
-  ├── docker/
-  │   └── tasks/main.yml
-  └── nginx/
-      ├── tasks/main.yml
-      ├── handlers/main.yml
-      └── templates/default.j2
-.github/
-  └── workflows/lint.yml
-```
-
-## CI (optional)
-GitHub Actions workflow `lint.yml` runs `ansible-lint` and `yamllint` on PRs.
-
-## Uninstall / rollback
-- Docker: `sudo apt-get remove -y docker.io && sudo usermod -G docker -d $(whoami)` (remove manually)
-- Nginx: `sudo apt-get purge -y nginx nginx-common`
-- MOTD: overwrite `/etc/motd` with your content
-
-> This starter aims to be idempotent and safe to run repeatedly.
+```text
+ansible-local-setup/
+├── ansible.cfg
+├── inventory.ini
+├── group_vars/
+│   └── all.yml
+├── playbooks/
+│   └── setup.yml
+├── roles/
+│   ├── common/
+│   │   ├── tasks/main.yml
+│   │   ├── handlers/main.yml
+│   │   └── templates/motd.j2
+│   ├── docker/
+│   │   └── tasks/main.yml
+│   ├── flask_app/
+│   │   ├── tasks/main.yml
+│   │   └── templates/
+│   │       ├── app.py.j2
+│   │       ├── wsgi.py.j2
+│   │       └── gunicorn.service.j2
+│   └── nginx/
+│       ├── tasks/main.yml
+│       └── templates/
+│           ├── flask_site.j2
+│           ├── default_static.j2
+│           └── index.html.j2
+└── .github/
+    └── workflows/lint.yml
