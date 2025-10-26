@@ -1,20 +1,15 @@
-# Use default profile, then tweak
-# Docs: https://ansible-lint.readthedocs.io/
 enable_list:
-  - fqcn                 # module names must be fully qualified
-  - fqcn-builtins        # enforce ansible.builtin.<module>
-  - name[play]           # plays must have a name
-  - name[task]           # tasks must have a name
+  - fqcn
+  - fqcn-builtins
+  - name[play]
+  - name[task]
 
-# Treat these as warnings rather than failures
 warn_list:
   - yaml[line-length]
 
-# Ignore this yamllint rule entirely inside ansible-lint
 skip_list:
   - yaml[empty-lines]
 
-# Optional: make sure we lint these kinds
 kinds:
   - playbook
   - tasks

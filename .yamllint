@@ -1,32 +1,32 @@
 extends: default
 
 rules:
-  # Keep booleans strict (no yes/no/on/off)
+  # keep strict boolean usage
   truthy:
     allowed-values: ['true', 'false']
     level: error
 
-  # Cut the noise on spacing/newline nits
+  # ignore multiple empty lines; just warn
   empty-lines:
     max: 1
     max-end: 0
     level: warning
 
-  # Spacing inside brackets like [main, master]
+  # enforce bracket spacing like [main, master]
   brackets:
     min-spaces-inside: 0
     max-spaces-inside: 0
     level: error
 
-  # Reasonable line length, warn only
+  # long lines only warn
   line-length:
     max: 160
     allow-non-breakable-words: true
     level: warning
 
-  # Make YAML doc start optional (---)
+  # no need for '---' YAML doc start
   document-start: disable
 
-  # Keep indentation consistent; sequences indented like mappings
+  # consistent indentation
   indentation:
     indent-sequences: consistent
