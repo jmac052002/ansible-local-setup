@@ -1,19 +1,18 @@
-
 ---
 # Update cache and install common packages
 - name: Update apt cache (Debian/Ubuntu)
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     cache_valid_time: 3600
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Upgrade packages (safe) on Debian/Ubuntu
-  apt:
+  ansible.builtin.apt:
     upgrade: safe
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install common packages (Debian/Ubuntu)
-  apt:
+  ansible.builtin.apt:
     name: "{{ common_packages }}"
     state: present
   when: ansible_facts['os_family'] == 'Debian'
@@ -34,7 +33,7 @@
 
 # Optional Firewall (UFW) - Ubuntu/Debian only
 - name: Ensure ufw is installed
-  apt:
+  ansible.builtin.apt:
     name: ufw
     state: present
   when: ansible_facts['os_family'] == 'Debian' and enable_ufw

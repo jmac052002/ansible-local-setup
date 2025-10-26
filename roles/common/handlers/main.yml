@@ -1,5 +1,4 @@
-
 ---
 - name: Reload MOTD
-  debug:
+  ansible.builtin.debug:
     msg: "MOTD updated."

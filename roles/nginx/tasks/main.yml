@@ -1,9 +1,9 @@
 ---
 - name: Install Nginx (Debian/Ubuntu)
-  apt:
+  ansible.builtin.apt:
     name: nginx
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install Nginx (RedHat/Amazon)
@@ -16,7 +16,7 @@
   service:
     name: nginx
     state: started
-    enabled: yes
+    enabled: true
 
 # STATIC MODE
 - name: Create web root (static mode)

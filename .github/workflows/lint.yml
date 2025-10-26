@@ -1,10 +1,9 @@
-
 name: Lint Ansible
 
 on:
   pull_request:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   lint:
