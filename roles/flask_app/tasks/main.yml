@@ -7,7 +7,7 @@
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Create app directory
-  file:
+  ansible.builtin.file:
     path: "{{ flask_app_dir }}"
     state: directory
     owner: "{{ flask_app_user }}"
@@ -15,12 +15,12 @@
     mode: "0755"
 
 - name: Create virtualenv
-  command: python3 -m venv {{ flask_app_dir }}/venv
+  ansible.builtin.command: python3 -m venv {{ flask_app_dir }}/venv
   args:
     creates: "{{ flask_app_dir }}/venv/bin/activate"
 
 - name: Deploy requirements.txt
-  copy:
+  ansible.builtin.copy:
     dest: "{{ flask_app_dir }}/requirements.txt"
     content: |
       flask==3.0.3
@@ -30,13 +30,13 @@
     mode: "0644"
 
 - name: Install Python packages in venv
-  pip:
+  ansible.builtin.pip:
     requirements: "{{ flask_app_dir }}/requirements.txt"
     virtualenv: "{{ flask_app_dir }}/venv"
     state: present
 
 - name: Deploy Flask app (app.py)
-  template:
+  ansible.builtin.template:
     src: app.py.j2
     dest: "{{ flask_app_dir }}/app.py"
     owner: "{{ flask_app_user }}"
@@ -44,7 +44,7 @@
     mode: "0644"
 
 - name: Deploy WSGI entrypoint (wsgi.py)
-  template:
+  ansible.builtin.template:
     src: wsgi.py.j2
     dest: "{{ flask_app_dir }}/wsgi.py"
     owner: "{{ flask_app_user }}"
@@ -52,7 +52,7 @@
     mode: "0644"
 
 - name: Create systemd service for Gunicorn
-  template:
+  ansible.builtin.template:
     src: gunicorn.service.j2
     dest: /etc/systemd/system/gunicorn_flaskapp.service
     owner: root
@@ -60,11 +60,11 @@
     mode: "0644"
 
 - name: Reload systemd daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
 
 - name: Enable and start gunicorn_flaskapp
-  systemd:
+  ansible.builtin.systemd:
     name: gunicorn_flaskapp
     state: started
     enabled: true

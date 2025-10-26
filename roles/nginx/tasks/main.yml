@@ -7,20 +7,20 @@
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install Nginx (RedHat/Amazon)
-  yum:
+  ansible.builtin.yum:
     name: nginx
     state: present
   when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Ensure Nginx service is enabled and started
-  service:
+  ansible.builtin.service:
     name: nginx
     state: started
     enabled: true
 
 # STATIC MODE
 - name: Create web root (static mode)
-  file:
+  ansible.builtin.file:
     path: /var/www/html
     state: directory
     owner: www-data
@@ -31,7 +31,7 @@
     - nginx_mode | default('static') == 'static'
 
 - name: Deploy index.html (static mode)
-  template:
+  ansible.builtin.template:
     src: index.html.j2
     dest: /var/www/html/index.html
     owner: www-data
@@ -42,7 +42,7 @@
     - nginx_mode | default('static') == 'static'
 
 - name: Deploy default site (static mode on Debian)
-  template:
+  ansible.builtin.template:
     src: default_static.j2
     dest: /etc/nginx/sites-available/default
     owner: root
@@ -54,7 +54,7 @@
   notify: Reload Nginx
 
 - name: Enable default site (static mode on Debian)
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/default
     dest: /etc/nginx/sites-enabled/default
     state: link
@@ -66,7 +66,7 @@
 
 # FLASK MODE
 - name: Deploy Flask reverse-proxy site (Debian)
-  template:
+  ansible.builtin.template:
     src: flask_site.j2
     dest: /etc/nginx/sites-available/flaskapp
     owner: root
@@ -78,7 +78,7 @@
   notify: Reload Nginx
 
 - name: Disable default site if present (Debian)
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   when:
@@ -87,7 +87,7 @@
   notify: Reload Nginx
 
 - name: Enable Flask site (Debian)
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/flaskapp
     dest: /etc/nginx/sites-enabled/flaskapp
     state: link
