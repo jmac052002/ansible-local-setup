@@ -18,7 +18,7 @@
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install common packages (RedHat/Amazon)
-  yum:
+  ansible.builtin.yum:
     name: "{{ common_packages | difference(['htop']) + ['htop'] }}"
     state: present
   when: ansible_facts['os_family'] in ['RedHat']
@@ -39,7 +39,7 @@
   when: ansible_facts['os_family'] == 'Debian' and enable_ufw
 
 - name: Allow selected ports via UFW
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ item.split('/')[0] }}"
     proto: "{{ item.split('/')[1] | default('tcp') }}"
@@ -47,14 +47,14 @@
   when: ansible_facts['os_family'] == 'Debian' and enable_ufw
 
 - name: Enable UFW
-  ufw:
+  community.general.ufw:
     state: enabled
     policy: allow
   when: ansible_facts['os_family'] == 'Debian' and enable_ufw
 
 # Friendly MOTD
 - name: Set /etc/motd
-  template:
+  ansible.builtin.template:
     src: motd.j2
     dest: /etc/motd
     owner: root
