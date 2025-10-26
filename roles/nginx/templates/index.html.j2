@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ansible Local Setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html,body{font-family:system-ui,Arial,sans-serif;margin:0;padding:0;background:#0b1020;color:#e6e6e6}
+    .wrap{max-width:720px;margin:12vh auto;padding:24px}
+    .card{background:#141b34;border:1px solid #202a4d;border-radius:14px;padding:24px}
+    h1{margin:0 0 8px 0}
+    code{background:#0b1020;border:1px solid #202a4d;border-radius:6px;padding:2px 6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>✅ Ansible is working on {{ ansible_hostname }}</h1>
+      <p>This page was deployed by the <code>nginx</code> role from your <code>ansible-local-setup</code> project.</p>
+      <ul>
+        <li>OS family: <code>{{ ansible_facts['os_family'] }}</code></li>
+        <li>Distro: <code>{{ ansible_distribution }} {{ ansible_distribution_version }}</code></li>
+        <li>Time zone: <code>{{ timezone }}</code></li>
+      </ul>
+      <p>Edit <code>roles/nginx/templates/index.html.j2</code> and re-run to update this page.</p>
+    </div>
+  </div>
+</body>
+</html>
+

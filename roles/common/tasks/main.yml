@@ -1,0 +1,64 @@
+
+---
+# Update cache and install common packages
+- name: Update apt cache (Debian/Ubuntu)
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Upgrade packages (safe) on Debian/Ubuntu
+  apt:
+    upgrade: safe
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install common packages (Debian/Ubuntu)
+  apt:
+    name: "{{ common_packages }}"
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install common packages (RedHat/Amazon)
+  yum:
+    name: "{{ common_packages | difference(['htop']) + ['htop'] }}"
+    state: present
+  when: ansible_facts['os_family'] in ['RedHat']
+
+# Timezone
+- name: Set timezone with module
+  community.general.timezone:
+    name: "{{ timezone }}"
+  when:
+    - ansible_facts['service_mgr'] | default('') == 'systemd'
+
+
+# Optional Firewall (UFW) - Ubuntu/Debian only
+- name: Ensure ufw is installed
+  apt:
+    name: ufw
+    state: present
+  when: ansible_facts['os_family'] == 'Debian' and enable_ufw
+
+- name: Allow selected ports via UFW
+  ufw:
+    rule: allow
+    port: "{{ item.split('/')[0] }}"
+    proto: "{{ item.split('/')[1] | default('tcp') }}"
+  loop: "{{ ufw_allowed_ports }}"
+  when: ansible_facts['os_family'] == 'Debian' and enable_ufw
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy: allow
+  when: ansible_facts['os_family'] == 'Debian' and enable_ufw
+
+# Friendly MOTD
+- name: Set /etc/motd
+  template:
+    src: motd.j2
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload MOTD

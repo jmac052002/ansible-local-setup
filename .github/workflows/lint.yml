@@ -1,0 +1,27 @@
+
+name: Lint Ansible
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-lint yamllint
+      - name: Ansible syntax check
+        run: ansible-playbook -i inventory.ini playbooks/setup.yml --syntax-check
+      - name: Run ansible-lint
+        run: ansible-lint
+      - name: Run yamllint
+        run: yamllint .

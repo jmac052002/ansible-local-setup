@@ -1,0 +1,24 @@
+
+# Global defaults for the project
+timezone: "America/Chicago"
+
+# Firewall (UFW) control (Ubuntu/Debian). Off by default.
+enable_ufw: false
+ufw_allowed_ports:
+  - "22/tcp"
+  - "80/tcp"
+  - "443/tcp"
+
+# If left empty, role will try to use the current user
+docker_user: ""
+common_packages:
+  - git
+  - curl
+  - htop
+  - unzip
+
+# --- Flask App vars ---
+nginx_mode: "flask"        # set to "static" to serve /var/www/html directly
+flask_app_dir: "/opt/flaskapp"
+flask_app_port: 8000
+flask_app_user: "www-data" # runs gunicorn as this user

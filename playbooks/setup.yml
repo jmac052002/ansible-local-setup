@@ -1,0 +1,15 @@
+---
+- name: Local server setup automation
+  hosts: all
+  become: true
+  gather_facts: yes
+
+  pre_tasks:
+    - name: Show target host
+      debug:
+        msg: "Running on {{ inventory_hostname }} ({{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }})"
+
+  roles:
+    - role: common
+    - role: flask_app
+    - role: nginx

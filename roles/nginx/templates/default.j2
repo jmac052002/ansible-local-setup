@@ -1,0 +1,29 @@
+{% if ansible_facts['os_family'] == 'Debian' %}
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+{% else %}
+# Minimal nginx.conf for non-Debian systems
+events {}
+http {
+    server {
+        listen 80;
+        server_name _;
+
+        location / {
+            return 200 'Hello from Ansible-managed Nginx on {{ ansible_hostname }}!\n';
+        }
+    }
+}
+{% endif %}
+
