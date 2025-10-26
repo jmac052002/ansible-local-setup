@@ -1,4 +1,29 @@
 # 🧱 Ansible Local Server Setup (Flask → Gunicorn → Nginx)
+[![CI: Lint](https://github.com/jmac052002/ansible-local-setup/actions/workflows/lint.yml/badge.svg)](https://github.com/jmac052002/ansible-local-setup/actions)
+![Ansible](https://img.shields.io/badge/Made%20with-Ansible-EE0000?logo=ansible&logoColor=white)
+![YAML Linted](https://img.shields.io/badge/yamllint-passing-2ea44f)
+![ansible-lint](https://img.shields.io/badge/ansible--lint-passing-2ea44f)
+
+## Run Locally (WSL/Ubuntu)
+
+```bash
+# Clone
+git clone git@github.com:jmac052002/ansible-local-setup.git
+cd ansible-local-setup
+
+# (Optional) ensure tools are installed
+python3 -m pip install --user ansible || true
+export PATH="$HOME/.local/bin:$PATH"
+
+# Ping localhost
+ansible -i inventory.ini all -m ping
+
+# Dry run
+ansible-playbook -i inventory.ini playbooks/setup.yml --check -v
+
+# Apply (prompts for sudo)
+ansible-playbook -i inventory.ini playbooks/setup.yml -K -v
+
 
 [![Ansible Lint](https://github.com/jmac052002/ansible-local-setup/actions/workflows/lint.yml/badge.svg)](https://github.com/jmac052002/ansible-local-setup/actions)
 [![Made with Ansible](https://img.shields.io/badge/Made%20with-Ansible-1A73E8?logo=ansible&logoColor=white)](https://www.ansible.com/)
